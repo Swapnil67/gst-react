@@ -1,0 +1,61 @@
+{
+	"name": "Abhishek",
+	"email": "abhiemail.com",
+	"about": "test user",
+	"phone-Number": 1597538520,
+	"website": "mywebsite.com",
+	"Address": "my address",
+	"gst-number": 123,
+	"current_credit":4564789,
+	"isPrimium":false,
+	"type":"none",
+	// type : Admin
+	// type : none
+	// type : Super Admin
+	"watchlists": [
+	  {
+	    "name": "Stock",
+	    "GST-Numbers": [654266496534]
+	  },
+	  {
+	    "name": "MySuppliers",
+	    "GST-Numbers": [65465496001530, 5465414564685 ]
+	  }
+	],
+	"orders": [
+	  {
+	    "name": "basic-plan",
+	    "price": 50,
+	    "current":1050,
+	    "previous":1000,
+	    "isCredit":true,
+	    "isDeposit":false,
+	    "transcation":{
+
+	    },
+	    "total-credits": 1250,
+	    "remaining-credits": 1200,
+	    "time":1236544798798
+	  },
+	  {
+		"name": "basic-plan",
+		"price": 50,
+		"current":1050,
+		"previous":1000,
+		"isCredit":true,
+		"isDeposit":false,
+		"transcation":{
+    
+		},
+		"total-credits": 1250,
+		"remaining-credits": 1200,
+		"time":1236544798798
+	  }
+  ],
+	"keys": [
+	 "api-Key": "Pl9TBdLRPs",
+	 "api-Secret-Key": "CCLW44cpmGMbrmaRyTUGMOIdVM68SQrAv7fKLizg"
+	],
+	"access-token": "sdfj[04-9402kfpmfpskadmkms",
+	"refresh-token": "sfkrorfj-0o3,0f439u,gf-0wj-3g"
+}
