@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtAccessPayload } from './interfaces/jwt-payload.interface';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtAccessPayload, JwtRefreshPayload } from './interfaces/jwt-payload.interface';
 import { sign } from 'jsonwebtoken';
 import * as dotenv from 'dotenv'
+import { v4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entites/user.entity';
 import { Repository } from 'typeorm';
+import { Refresh_Token } from './entities/refresh-token.entity';
+import { RefreshAccessTokenDto } from 'src/user/dto/refresh-access-token.dto';
 
 dotenv.config();
 
@@ -14,6 +17,8 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Refresh_Token)
+    private refreshTokenRepo: Repository<Refresh_Token>,
   ) {}
 
   async createAccessToken(jwtAccessPayload: JwtAccessPayload) {
@@ -33,6 +38,37 @@ export class AuthService {
       throw new Error("jwt No user found");
     }
   }
+
+  async createRefreshToken(id) {
+    let rtoken = v4(); // Create the Refresh token
+    // Save the refreshToken to its table
+    const newRefToken = this.refreshTokenRepo.create({ rtoken });
+    // Save the userId in refresh token table 
+    const user = await this.usersRepository.findOneOrFail(id);    
+    newRefToken.user = user;
+    await this.refreshTokenRepo.save(newRefToken);
+    return newRefToken;
+}
+
+
+
+  async findRefreshToken(token: string) {
+    // Add the user role with token when multiple user entity comes
+    const refreshToken = await this.refreshTokenRepo
+      .createQueryBuilder("Refresh_Token")
+      .leftJoinAndSelect("Refresh_Token.user", "user")
+      .where("Refresh_Token.rtoken = :myToken", {myToken: token})
+      .getOne()
+    // console.log("Find Refresh Token: ", refreshToken);
+    
+    if (!refreshToken) {
+      throw new UnauthorizedException('User has been logged out.');
+    }
+    return refreshToken.user.id;
+  }
+
+
+
 
     //   ┬┬ ┬┌┬┐  ┌─┐─┐ ┬┌┬┐┬─┐┌─┐┌─┐┌┬┐┌─┐┬─┐
     //   ││││ │   ├┤ ┌┴┬┘ │ ├┬┘├─┤│   │ │ │├┬┘

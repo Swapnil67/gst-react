@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { Refresh_Token } from 'src/auth/entities/refresh-token.entity';
 import { Gstin_Business } from 'src/user/entites/gst_buss.entity';
 import { Gstin_Detail } from 'src/user/entites/gst_detail.entity';
 import { Gstin_filing } from 'src/user/entites/gst_filing.entity';
@@ -13,7 +14,7 @@ const config: MysqlConnectionOptions = {
   username: "bipin_gstin",
   password: "Gstin@123",
   database: "gstin_bipin",
-  entities: [User, Gstin_Business, Gstin_filing, Gstin_Detail],
+  entities: [User, Refresh_Token, Gstin_Business, Gstin_filing, Gstin_Detail],
   synchronize: true,
 }
 

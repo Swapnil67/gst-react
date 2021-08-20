@@ -4,11 +4,12 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Gstin_Business } from './entites/gst_buss.entity';
 import { Response } from 'express';
-import { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { JwtAccessPayload, JwtRefreshPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from './entites/user.entity';
 import { Gstin_Detail } from './entites/gst_detail.entity';
 import { Gstin_filing } from './entites/gst_filing.entity';
+import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 
 @Injectable()
 export class UserService {
@@ -107,17 +108,36 @@ export class UserService {
 
     let jwtAccessPayload: JwtAccessPayload = {name: user.name, id: user.id}
     const access_token = await this.authService.createAccessToken(jwtAccessPayload)
-    // let jwtRefreshPayload: JwtRefreshPayload = {userRole: body.userRole, id: user._id}
-    // const refresh_token = await this.authService.createRefreshToken(jwtRefreshPayload)
     user.token = access_token;
     await this.usersRepository.save(user); // Save can also be used to update the user
+    // Create and store the Refresh Token
+    let jwtRefreshPayload = {id: user.id}
+    const refresh_token = await this.authService.createRefreshToken(jwtRefreshPayload)
 
     return res.json({
       success: true,
       msg: "User LoggedIn successfully",
       accessToken: access_token,
-      // refreshToken: refresh_token
+      refreshToken: refresh_token
     })
+  
+  }
+
+  async refreshAccessToken(body: RefreshAccessTokenDto) {
+    const {refreshToken} = body;
+    // Find the user belongs to the refresh token
+    const userId = await this.authService.findRefreshToken(refreshToken);
+    console.log(userId);
+
+    const user = await this.usersRepository.findOne({ where: {id: userId}});    
+    if (!user) {
+        throw new BadRequestException('Bad request');
+    }
+    let jwtAccessPayload: JwtAccessPayload = {name: user.name, id: user.id}
+    return {
+        accessToken: await this.authService.createAccessToken(jwtAccessPayload),
+    };
+
   }
 
 

@@ -4,7 +4,7 @@ export interface JwtAccessPayload {
 }
 
 export interface JwtRefreshPayload {
-  id: string;
-  userRole: string;
+  name: string;
+  id: number;
 }
 

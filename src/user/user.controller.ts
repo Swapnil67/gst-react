@@ -1,7 +1,8 @@
-import { Body, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Get, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
+import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import { User } from './entites/user.entity';
 import { UserService } from './user.service';
 
@@ -43,6 +44,11 @@ export class UserController {
   @Get('/protected')
   async getProtected(@Req() req: Request) {
     return req.user;
+  }
+
+  @Post('refresh-access-token')
+  async refreshAccessToken(@Body() body: RefreshAccessTokenDto) {
+    return await this.userService.refreshAccessToken(body);
   }
 
 }
